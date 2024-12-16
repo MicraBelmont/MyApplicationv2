@@ -180,7 +180,7 @@ public void aceptar (View v){
         String plazoM;
         plazoM = plazoMe;
         if(MetaCant.isEmpty()) {
-            txtMetaCant.setError("Este campo NOCambi puede quedar vacío");
+            txtMetaCant.setError("Este campo NO puede quedar vacío");
             retorno = false;
                 } else if (Razon.isEmpty()) {
                 txtRazon.setError("Este campo NO puede quedar vacío");
