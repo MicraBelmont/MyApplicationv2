@@ -32,7 +32,7 @@ public class MetaFin extends AppCompatActivity {
     EditText txtMetaCant, txtRazon;
     Button btnAceptar;
     private FirebaseFirestore basededatos;
-
+    String plazoMe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +52,33 @@ public class MetaFin extends AppCompatActivity {
         plazo.setAdapter(ad);
         boolean b = true;
         plazo.setSelected(b);
-        int a;
-        String plazoM;
-        if (plazo.getItemAtPosition(1).equals("Corto (menor a 6 meses)")){
-            plazoM = "Corto";
-        }
+     //   int a;
+        plazo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int a, long l) {
+      //          public void onItemSelected(int a) {
+                    if (plazo.getItemAtPosition(a).equals("Corto (menor a 6 meses)")) {
+                      //SI SE SELECCIONA EL PLAZO CORTO EL VALOR DENTRO DE LA BASE DE DATOS SERÁ CORTO
+                        plazoMe = "Corto";
+                    }
+                    if (plazo.getItemAtPosition(a).equals("Mediano (6 meses a 1 año)")) {
+                        //SI SE SELECCIONA EL PLAZO MEDIANO EL VALOR DENTRO DE LA BASE DE DATOS SERÁ MEDIANO
+                        plazoMe = "Mediano";
+                    }
+                    if (plazo.getItemAtPosition(a).equals("Largo (mayor a 1 año)")){
+                        //SI SE SELECCIONA EL PLAZO  LARGO EL VALOR DENTRO DE LA BASE DE DATOS SERÁ LARGO
+                        plazoMe = "Largo";
+                    }
+                }
+           // }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+
+
+        });
         // FIN SPINNER PLAZO
 
         /** MENU LATERAL **/
@@ -137,16 +159,6 @@ public class MetaFin extends AppCompatActivity {
         txtMetaCant= (EditText)findViewById(R.id.txtMetaCant);
         txtRazon = (EditText)findViewById(R.id.txtRazon);
         btnAceptar =findViewById(R.id.btnAceptar);
-      //  String MetaCant = txtMetaCant.getText().toString();
-      //  String Plazo;
-
-
-
-
-
-
-
-
     }
     //     ESTE SE VA A PONER EN EL EVENTO ON CLICK DEL BOTÓN DE ACEPTAR ****
 public void aceptar (View v){
@@ -165,26 +177,27 @@ public void aceptar (View v){
         String cantidad_objetivo = txtMetaCant.getText().toString().trim();
         String Razon = txtRazon.getText().toString();
         String motivo_ahorro = txtRazon.getText().toString().trim();
-
+        String plazoM;
+        plazoM = plazoMe;
         if(MetaCant.isEmpty()) {
-            txtMetaCant.setError("Este campo NO puede quedar vacío");
+            txtMetaCant.setError("Este campo NOCambi puede quedar vacío");
             retorno = false;
-                }
-       else if (Razon.isEmpty()) {
+                } else if (Razon.isEmpty()) {
                 txtRazon.setError("Este campo NO puede quedar vacío");
                 retorno = false;
             } else {
-                meta_financiera(motivo_ahorro, cantidad_objetivo);
-             //   meta_financiera(cantidad_objetivo);
+
+                meta_financiera(motivo_ahorro, cantidad_objetivo, plazoM);
+
 
             }
         return retorno;
     }
-private void meta_financiera (String motivo_ahorro, String cantidad_objetivo){
+private void meta_financiera (String motivo_ahorro, String cantidad_objetivo, String plazoM){
 Map <String, Object> map = new HashMap<>();
 map.put("cantidad_objetivo",cantidad_objetivo ); //ESTE ES STRING
 map.put("motivo_ahorro", motivo_ahorro);
-
+map.put("plazo",plazoM);
 basededatos.collection("metaFinanciera").add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
     @Override
     public void onSuccess(DocumentReference documentReference) {
